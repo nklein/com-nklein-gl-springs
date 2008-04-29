@@ -1,10 +1,10 @@
 (in-package :com.nklein.gl-springs)
 
 (defclass node ()
-    ((name :initarg :name)
-     (pos  :reader node-pos :initarg :pos
+    ((name :initarg :name :accessor node-name)
+     (pos  :initarg :pos  :reader node-pos
 	     :initform (random-vector 'single-float 3))
-     (mass :initarg :mass :initform 1.0s0)
+     (mass :initarg :mass :reader node-mass :initform 1.0s0)
      prev
      acc))
 
