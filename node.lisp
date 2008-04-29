@@ -2,7 +2,7 @@
 
 (defclass node ()
     ((name :initarg :name)
-     (pos  :initarg :pos  :initform (normalize (random-vector 3)))
+     (pos  :initarg :pos  :initform (random-vector 'single-float 3))
      (mass :initarg :mass :initform 1.0s0)
      prev
      acc))
