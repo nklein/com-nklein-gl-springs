@@ -17,8 +17,9 @@
 ;;;;------------------------------------------------------------------------
 (defmethod spring-calculate-force ((ss spring))
     (with-slots (start end constant rest-length) ss
-	(let* ((p1 (particle-pos end))
-	       (diff (v- p1 (particle-pos start)))
+	(let* ((p0   (particle-pos start))
+	       (p1   (particle-pos end))
+	       (diff (v- p1 p0))
 	       (len  (vnorm diff))
 	       (goal (v* diff (/ rest-length len))))
 	    (v* (v- goal p1) constant))))

@@ -1,7 +1,8 @@
 (in-package :com.nklein.gl-springs)
 
 (defclass particle ()
-    ((name :initarg :name :accessor particle-name)
+    ((name :initarg :name :accessor particle-name
+	     :initform (error "Must specify name"))
      (pos  :initarg :pos  :reader particle-pos
 	     :initform (random-vector 'single-float 3))
      (mass :initarg :mass :reader particle-mass :initform 1.0s0)
