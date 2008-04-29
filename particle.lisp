@@ -1,40 +1,40 @@
 (in-package :com.nklein.gl-springs)
 
-(defclass node ()
-    ((name :initarg :name :accessor node-name)
-     (pos  :initarg :pos  :reader node-pos
+(defclass particle ()
+    ((name :initarg :name :accessor particle-name)
+     (pos  :initarg :pos  :reader particle-pos
 	     :initform (random-vector 'single-float 3))
-     (mass :initarg :mass :reader node-mass :initform 1.0s0)
+     (mass :initarg :mass :reader particle-mass :initform 1.0s0)
      prev
      acc))
 
 ;;;;------------------------------------------------------------------------
-(defgeneric node-reset-acc (nn)
+(defgeneric particle-reset-acc (nn)
     (:documentation
 	"Prepare the accumulator to handle the same size vectors as the pos"))
 
-(defgeneric node-add-force-to-acc (nn vec)
+(defgeneric particle-add-force-to-acc (nn vec)
     (:documentation "Add something into the accumulation vector"))
 
-(defgeneric node-apply-force (nn elapsed)
-    (:documentation "Apply the force to the current node"))
+(defgeneric particle-apply-force (nn elapsed)
+    (:documentation "Apply the force to the current particle"))
 
 ;;;;------------------------------------------------------------------------
-(defmethod initialize-instance :after ((nn node) &key)
+(defmethod initialize-instance :after ((nn particle) &key)
     "Reset the accumulator and copy the current-position to the previous"
     (with-slots (pos prev) nn
 	(setf prev (map 'vector #'identity pos)))
-    (node-reset-acc nn))
+    (particle-reset-acc nn))
 
-(defmethod node-reset-acc ((nn node))
+(defmethod particle-reset-acc ((nn particle))
     (with-slots (pos acc) nn
 	(setf acc (map 'vector #'(lambda (x) (* 0s0 x)) pos))))
 
-(defmethod node-add-force-to-acc ((nn node) vec)
+(defmethod particle-add-force-to-acc ((nn particle) vec)
     (with-slots (acc) nn
 	(setf acc (v+ acc vec))))
 
-(defmethod node-apply-force ((nn node) elapsed)
+(defmethod particle-apply-force ((nn particle) elapsed)
     "Use Verlet integration to calculate the new position"
     (with-slots (pos prev acc mass) nn
 	(let ((aa (v/ acc mass))
