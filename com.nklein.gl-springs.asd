@@ -2,4 +2,5 @@
     :depends-on (:com.nklein.util.general
 		 :com.nklein.util.vec-math)
     :components ((:file "package")
-		 (:file "particle" :depends-on ("package"))))
+		 (:file "particle" :depends-on ("package"))
+		 (:file "spring"   :depends-on ("package" "particle"))))
