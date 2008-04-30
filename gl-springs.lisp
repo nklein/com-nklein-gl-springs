@@ -1,7 +1,8 @@
 (in-package :com.nklein.gl-springs)
 
 (defclass spring-window (glut:window)
-    ((spring-system :initarg :system :accessor spring-window-spring-system))
+    ((spring-system :initarg :system :accessor spring-window-spring-system)
+     (last-time :initform (get-internal-real-time)))
     (:default-initargs :width 640 :height 480 :title "gl-springs"
 	    :mode '(:single :rgb)))
 
@@ -37,9 +38,15 @@
     (gl:flush))
 
 (defmethod glut:idle ((w spring-window))
-    (sleep (/ 60.0))
-    (with-slots (spring-system) w
-	(spring-system-update spring-system (/ 60.0)))
+    (with-slots (last-time) w
+	(let* ((spf (/ 60.0s0))	; nominal seconds per frame
+	       (cur (get-internal-real-time))
+	       (dt  (/ (- cur last-time) 1000.0s0)))
+	    (if (< dt spf)
+		(sleep (- spf dt)))
+	    (setf last-time cur)
+	    (with-slots (spring-system) w
+		(spring-system-update spring-system spf))))
     (glut:post-redisplay))
 
 (defmethod glut:reshape ((w spring-window) width height)
