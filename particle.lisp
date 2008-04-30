@@ -6,7 +6,7 @@
      (pos  :initarg :pos  :reader particle-pos
 	     :initform (random-vector 'single-float 3))
      (mass :initarg :mass :reader particle-mass :initform 1.0s0)
-     (mu   :initarg :mu   :initform 0.1s0)
+     (mu   :initarg :mu   :initform 0.5s0)
      prev
      acc))
 

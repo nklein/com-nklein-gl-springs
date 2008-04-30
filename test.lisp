@@ -9,8 +9,8 @@
 (defvar *n4* nil)
 (defvar *ss* nil)
 
-(setf *n0* (make-instance 'particle :name "n0" :pos (v 'single-float -1 0 0) :mu 0.8s0 ))
-(setf *n1* (make-instance 'particle :name "n1" :pos (v 'single-float  1 0 0) :mu 0.8s0 ))
+(setf *n0* (make-instance 'particle :name "n0"))
+(setf *n1* (make-instance 'particle :name "n1"))
 (setf *n2* (make-instance 'particle :name "n2"))
 (setf *n3* (make-instance 'particle :name "n3"))
 (setf *n4* (make-instance 'particle :name "n4"))
