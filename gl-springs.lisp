@@ -30,7 +30,7 @@
     (gl:clear :color-buffer-bit)
     (gl:color 1 1 1)
     (gl:load-identity)
-    (glu:look-at 0.0 0.0 20.0 0.0 0.0 0.0 0 1 0)
+    (glu:look-at 0.0 0.0 250.0 0.0 0.0 0.0 0 1 0)
     (gl:line-width 2)
     (with-slots (spring-system) w
 	(spring-system-with-each-spring   spring-system #'draw-spring)
@@ -53,7 +53,7 @@
     (gl:viewport 0 0 width height)
     (gl:matrix-mode :projection)
     (gl:load-identity)
-    (gl:frustum -1 1 -1 1 1.5 100)
+    (gl:frustum -1 1 -1 1 1.5 500)
     (gl:matrix-mode :modelview))
 
 (defmethod glut:keyboard ((w spring-window) key xx yy)

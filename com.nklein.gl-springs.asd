@@ -7,6 +7,12 @@
 		 (:file "spring"        :depends-on ("package" "particle"))
 		 (:file "spring-system" :depends-on
 					     ("package" "particle" "spring"))
+		 (:file "analyze"       :depends-on (
+					     "package"
+					     "particle"
+					     "spring"
+					     "spring-system"
+					))
 		 (:file "gl-springs"    :depends-on (
 					     "package"
 					     "particle"
