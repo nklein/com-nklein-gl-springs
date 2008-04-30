@@ -22,4 +22,4 @@
 	       (diff (v- p1 p0))
 	       (len  (vnorm diff))
 	       (goal (v* diff (/ rest-length len))))
-	    (v* (v- goal p1) constant))))
+	    (v* (v- goal diff) constant))))

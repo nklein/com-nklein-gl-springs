@@ -27,19 +27,29 @@
     (:documentation "Iterate over each spring"))
 
 ;;;;------------------------------------------------------------------------
+;;; want to attract things to the origin.
+(defun particle-attract-to-origin (particle)
+    (let* ((dir (normalize (particle-pos particle))))
+	(particle-add-force-to-acc particle
+		(v* dir -0.05s0))))
+
 (defun particle-repulsive-force (v0 v1)
     (if (not (eql v0 v1))
 	(let* ((p0 (particle-pos v0))
 	       (p1 (particle-pos v1))
 	       (dir (v- p1 p0))
 	       (len (vnorm dir)))
-	    (particle-add-force-to-acc v1 (v/ dir (* len len len))))))
+	    (if (< len 1.0s0)
+		(particle-add-force-to-acc
+		    v1 (v* dir (- (/ 1.0s0 len len len) 1.0s0)))))))
 
 (defmethod spring-system-update ((ss spring-system) elapsed)
     (with-slots (particles springs) ss
 	;; reset our accumulators
 	(spring-system-with-each-particle ss
 		#'(lambda (pp) (particle-reset-acc pp)))
+	;; attract every particle toward the origin
+	(spring-system-with-each-particle ss #'particle-attract-to-origin)
 	;; big n^2 particles pushing each other away
 	;; there is redudancy here, because F(a,b) = -F(b,a), but
 	;; I'm not worrying about that right now
