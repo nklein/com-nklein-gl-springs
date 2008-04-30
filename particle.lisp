@@ -6,6 +6,7 @@
      (pos  :initarg :pos  :reader particle-pos
 	     :initform (random-vector 'single-float 3))
      (mass :initarg :mass :reader particle-mass :initform 1.0s0)
+     (mu   :initarg :mu   :initform 0.1s0)
      prev
      acc))
 
@@ -37,9 +38,9 @@
 
 (defmethod particle-apply-force ((nn particle) elapsed)
     "Use Verlet integration to calculate the new position"
-    (with-slots (pos prev acc mass) nn
-	(let ((aa (v/ acc mass))
-	      (e2 (* elapsed elapsed)))
+    (with-slots (pos prev acc mass mu) nn
+	(let* ((aa     (v/ (v+ acc (v* (v- prev pos) mu)) mass))
+	       (e2     (* elapsed elapsed)))
 	    (let ((xx (v+ (v- (v* pos 2.0s0) prev) (v* aa e2))))
 		    (setf prev pos
 			  pos  xx)))))

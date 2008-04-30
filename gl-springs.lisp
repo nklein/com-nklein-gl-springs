@@ -29,7 +29,7 @@
     (gl:clear :color-buffer-bit)
     (gl:color 1 1 1)
     (gl:load-identity)
-    (glu:look-at 0.0 0.0 30.0 0.0 0.0 0.0 0 1 0)
+    (glu:look-at 0.0 0.0 20.0 0.0 0.0 0.0 0 1 0)
     (gl:line-width 2)
     (with-slots (spring-system) w
 	(spring-system-with-each-spring   spring-system #'draw-spring)
@@ -37,8 +37,9 @@
     (gl:flush))
 
 (defmethod glut:idle ((w spring-window))
+    (sleep (/ 60.0))
     (with-slots (spring-system) w
-	(spring-system-update spring-system (/ 1500.0)))
+	(spring-system-update spring-system (/ 60.0)))
     (glut:post-redisplay))
 
 (defmethod glut:reshape ((w spring-window) width height)
