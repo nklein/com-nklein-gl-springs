@@ -20,20 +20,26 @@
 	    (apply-vector gl:vertex p1 3))))
 
 (defun draw-particle (pp)
-    (declare (ignore pp)))
+    (let ((pos (particle-pos pp)))
+	(gl:with-primitives :points
+	    (apply-vector gl:vertex pos 3))))
 
 (defmethod glut:display-window :before ((w spring-window))
     (gl:clear-color 0 0 0 0)
+    (gl:line-width 3.0)
+    (gl:point-size 9.0)
     (gl:shade-model :flat))
 
 (defmethod glut:display ((w spring-window))
     (gl:clear :color-buffer-bit)
-    (gl:color 1 1 1)
+    (gl:matrix-mode :modelview)
     (gl:load-identity)
     (glu:look-at 0.0 0.0 15.0 0.0 0.0 0.0 0 1 0)
-    (gl:line-width 2)
+    (gl:rotate (* 30.0 (/ (get-internal-real-time) 1000.0)) 0 1 0)
     (with-slots (spring-system) w
+	(gl:color 1 1 1)
 	(spring-system-with-each-spring   spring-system #'draw-spring)
+	(gl:color 0.3 0.3 1)
 	(spring-system-with-each-particle spring-system #'draw-particle))
     (gl:flush))
 

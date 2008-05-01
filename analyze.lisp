@@ -1,15 +1,31 @@
 (in-package :com.nklein.gl-springs)
 
+(defun get-filenames-from-components (plist prefix)
+    (let ((prefix prefix)
+	  (comps  (getf plist :components))
+	  (module (getf plist :module)))
+	(if module
+	    (typecase module
+		(sequence (setf prefix (concatenate 'string prefix "/" module)))
+		(t        (setf prefix (concatenate 'string
+						    prefix
+						    "/"
+						    (symbol-name module))))))
+	(mapcan #'(lambda (ll)
+			(let ((ff (getf ll :file)))
+			    (if ff
+				(list
+				    (concatenate 'string prefix "/" ff ".lisp"))
+				(get-filenames-from-components ll prefix))))
+		comps)))
+
 (defun get-filenames-from-asd (asd)
     (with-open-file (in asd :direction :input)
 	(do ((form (read in nil) (read in nil)))
 	    ((null form))
-	    (if (eql (first form) 'asdf:defsystem)
+	    (if (equalp (symbol-name (first form)) "DEFSYSTEM")
 		(let ((plist (cddr form)))
-		    (return (mapcar #'(lambda (ll)
-					(concatenate 'string
-					    (getf ll :file) ".lisp"))
-				    (getf plist :components))))))))
+		    (return (get-filenames-from-components plist ".")))))))
 
 (defun get-defining-forms-from-file (ff)
     (with-open-file (in ff :direction :input)
@@ -36,7 +52,7 @@
 				    (progn
 					(format t "SPRING: ~A to ~A~%" func tt)
 					(spring-system-add-spring ss
-					    start end 1.0 1.0)))))
+					    start end 0.1 1.0)))))
 			(t
 			    (trec (car tt))
 			    (trec (cdr tt))))))

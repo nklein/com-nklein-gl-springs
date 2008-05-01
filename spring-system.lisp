@@ -39,8 +39,9 @@
 	       (p1 (particle-pos v1))
 	       (dir (v- p1 p0))
 	       (len (vnorm dir)))
-	    (particle-add-force-to-acc
-		v1 (v/ dir (* len len len))))))
+	    (if (> len 0.00001)
+		(particle-add-force-to-acc
+		    v1 (v/ dir (* len len len)))))))
 
 (defmethod spring-system-update ((ss spring-system) elapsed)
     (with-slots (particles springs) ss
@@ -67,8 +68,7 @@
 			(particle-add-force-to-acc end ff))))
 	;; apply the forces
 	(spring-system-with-each-particle ss
-		#'(lambda (pp)
-		    (particle-apply-force pp elapsed)))))
+		#'(lambda (pp) (particle-apply-force pp elapsed)))))
 
 (defmethod spring-system-add-particle ((ss spring-system) (pp particle))
     (with-slots (particles) ss
