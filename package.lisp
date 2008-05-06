@@ -11,5 +11,6 @@
 		:spring-constant
 		:spring-rest-length
 	     :spring-system
+		:make-spring-system
 		:spring-system-add-particle
 		:spring-system-add-spring))

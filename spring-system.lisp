@@ -27,6 +27,33 @@
     (:documentation "Iterate over each spring"))
 
 ;;;;------------------------------------------------------------------------
+;;; make spring system from a list of springs
+;;; each entry in the list is a list of this form:
+;;;    (a (b . bc) (c . cc) (d . dc) ...)
+;;; which means there is a connection from a to b with closeness bc
+;;; a connection from a to c with closeness cc, a connection from
+;;; a to d with closeness dc, ...
+(defun make-spring-system (forms)
+    (let ((ss (make-instance 'spring-system)))
+	(mapc #'(lambda (ff)
+		    (spring-system-add-particle ss
+			(make-instance 'particle :name (car ff))))
+	      forms)
+	(mapc #'(lambda (ff) (add-all-springs-to-system ss ff)) forms)
+	ss))
+
+(defun add-all-springs-to-system (ss ff)
+    (let ((start (spring-system-find-particle ss (car ff))))
+	(if start
+	    (mapc #'(lambda (info)
+			(let ((end (spring-system-find-particle ss (car info)))
+			      (len (/ (+ 1.0 (log (cdr info))))))
+			    (if end
+				(spring-system-add-spring ss start end
+							  1.0 len))))
+		  (cdr ff)))))
+
+;;;;------------------------------------------------------------------------
 ;;; want to attract things to the origin.
 (defun particle-attract-to-origin (particle)
     (let* ((dir (normalize (particle-pos particle))))

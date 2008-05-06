@@ -38,31 +38,39 @@
 		    (push (cons (second form) (cdddr form)) ret))))))
 
 (defun add-particle-from-form (ss ff)
-    (spring-system-add-particle ss (make-instance 'particle :name (car ff))))
+    (let ((fname (car ff)))
+	(setf (gethash fname ss) nil)))
+
+(defun add-springs-from-form-rec (ss fname ff so-far)
+    (cond
+	((null ff))
+	((atom ff)
+	    (multiple-value-bind (ll ll-p) (gethash ff ss)
+		(declare (ignore ll))
+		(if (and ll-p (not (equal fname ff)))
+		    (let ((ent (assoc ff so-far)))
+			(if ent
+			    (incf (cdr ent))
+			    (push (cons ff 1) so-far))))))
+	(t
+	    (setf so-far (add-springs-from-form-rec ss fname (car ff) so-far))
+	    (setf so-far (add-springs-from-form-rec ss fname (cdr ff) so-far))))
+    so-far)
 
 (defun add-springs-from-form (ss ff)
-    (let* ((func  (car ff))
-	   (start (spring-system-find-particle ss func)))
-	(if start
-	    (labels ((trec (tt)
-		    (cond
-			((atom tt)
-			    (let ((end (spring-system-find-particle ss tt)))
-				(if end
-				    (progn
-					(format t "SPRING: ~A to ~A~%" func tt)
-					(spring-system-add-spring ss
-					    start end 0.1 1.0)))))
-			(t
-			    (trec (car tt))
-			    (trec (cdr tt))))))
-		(trec (cdr ff))))))
+    (let ((fname (car ff)))
+	(setf (gethash fname ss)
+	    (sort
+		(add-springs-from-form-rec ss fname (cdr ff) (gethash fname ss))
+		#'string-lessp
+		:key #'car))))
 
 (defun springs-from-asd (asd)
-    (let* ((ss    (make-instance 'spring-system))
+    (let* ((ss    (make-hash-table))
 	   (files (get-filenames-from-asd asd))
-           (forms (mapcan #'get-defining-forms-from-file files)))
-	(format t "names: ~A~%" (mapcar #'(lambda (x) (car x)) forms))
+           (forms (mapcan #'get-defining-forms-from-file files))
+	   ret)
 	(mapc #'(lambda (ff) (add-particle-from-form ss ff)) forms)
 	(mapc #'(lambda (ff) (add-springs-from-form ss ff)) forms)
-	ss))
+	(maphash #'(lambda (key val) (push (cons key val) ret)) ss)
+	(sort ret #'string-lessp :key #'car)))
