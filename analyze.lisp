@@ -43,7 +43,7 @@
 
 (defun add-springs-from-form-rec (ss fname ff so-far)
     (cond
-	((null ff))
+	((null ff) so-far)
 	((atom ff)
 	    (multiple-value-bind (ll ll-p) (gethash ff ss)
 		(declare (ignore ll))
@@ -51,11 +51,12 @@
 		    (let ((ent (assoc ff so-far)))
 			(if ent
 			    (incf (cdr ent))
-			    (push (cons ff 1) so-far))))))
+			    (push (cons ff 1) so-far))))
+		so-far))
 	(t
-	    (setf so-far (add-springs-from-form-rec ss fname (car ff) so-far))
-	    (setf so-far (add-springs-from-form-rec ss fname (cdr ff) so-far))))
-    so-far)
+	    (add-springs-from-form-rec
+		ss fname (cdr ff)
+	        (add-springs-from-form-rec ss fname (car ff) so-far)))))
 
 (defun add-springs-from-form (ss ff)
     (let ((fname (car ff)))
