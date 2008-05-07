@@ -53,6 +53,10 @@
 							  1.0 len))))
 		  (cdr ff)))))
 
+(defun read-spring-system-from-file (fname)
+    (with-open-file (in fname :direction :input)
+	(make-spring-system (read in nil))))
+
 ;;;;------------------------------------------------------------------------
 ;;; want to attract things to the origin.
 (defun particle-attract-to-origin (particle)

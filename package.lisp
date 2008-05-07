@@ -1,7 +1,6 @@
 (defpackage :com.nklein.gl-springs
     (:use :cl :com.nklein.util.general :com.nklein.util.vec-math)
     (:export :gl-springs
-	     :springs-from-asd
 	     :particle
 		:particle-name
 		:particle-pos
@@ -12,5 +11,7 @@
 		:spring-rest-length
 	     :spring-system
 		:make-spring-system
+		:read-spring-system-from-file
+		:springs-from-asd
 		:spring-system-add-particle
 		:spring-system-add-spring))
